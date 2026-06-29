@@ -2,9 +2,9 @@ import * as d from "drizzle-orm/pg-core";
 import { userInNeonAuth } from "./neonAuth";
 
 const timestamps = {
-  updatedAt: d.timestamp(),
-  createdAt: d.timestamp().defaultNow().notNull(),
-  deletedAt: d.timestamp(),
+  updatedAt: d.timestamp({ withTimezone: true }),
+  createdAt: d.timestamp({ withTimezone: true }).defaultNow().notNull(),
+  deletedAt: d.timestamp({ withTimezone: true }),
 };
 
 const logTypeEnum = d.pgEnum("log_type", [
@@ -58,8 +58,8 @@ export const workouts = d.snakeCase.table("workouts", {
     .uuid()
     .notNull()
     .references(() => venues.id),
-  startedAt: d.timestamp().notNull(),
-  endedAt: d.timestamp(),
+  startedAt: d.timestamp({ withTimezone: true }).notNull(),
+  endedAt: d.timestamp({ withTimezone: true }),
   ...timestamps,
 });
 
