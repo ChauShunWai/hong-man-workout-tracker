@@ -1,4 +1,5 @@
 import * as d from "drizzle-orm/pg-core";
+import { userInNeonAuth } from "./neonAuth";
 
 const timestamps = {
   updatedAt: d.timestamp(),
@@ -22,11 +23,11 @@ export const venues = d.snakeCase.table("venues", {
   ...timestamps,
 });
 
-export const equipments = d.snakeCase.table("equipments", {
+export const canonicalEquipments = d.snakeCase.table("canonical_equipments", {
   id: d.uuid().defaultRandom().primaryKey(),
   slug: d.text().notNull().unique(),
-  cnameEn: d.text().notNull(),
-  cnameCn: d.text().notNull(),
+  nameEn: d.text().notNull(),
+  nameCn: d.text().notNull(),
   logType: logTypeEnum().notNull(),
   resistanceType: resistanceTypeEnum(),
   ...timestamps,
@@ -34,8 +35,14 @@ export const equipments = d.snakeCase.table("equipments", {
 
 export const venueEquipments = d.snakeCase.table("venue_equipments", {
   id: d.uuid().defaultRandom().primaryKey(),
-  venueId: d.uuid().notNull(),
-  equipmentId: d.uuid().notNull(),
+  venueId: d
+    .uuid()
+    .notNull()
+    .references(() => venues.id),
+  equipmentId: d
+    .uuid()
+    .notNull()
+    .references(() => canonicalEquipments.id),
   nameEn: d.text().notNull(),
   nameCn: d.text().notNull(),
   ...timestamps,
@@ -43,8 +50,14 @@ export const venueEquipments = d.snakeCase.table("venue_equipments", {
 
 export const workouts = d.snakeCase.table("workouts", {
   id: d.uuid().defaultRandom().primaryKey(),
-  userId: d.uuid().notNull(),
-  venueId: d.uuid().notNull(),
+  userId: d
+    .uuid()
+    .notNull()
+    .references(() => userInNeonAuth.id),
+  venueId: d
+    .uuid()
+    .notNull()
+    .references(() => venues.id),
   startedAt: d.timestamp().notNull(),
   endedAt: d.timestamp(),
   ...timestamps,
@@ -52,18 +65,27 @@ export const workouts = d.snakeCase.table("workouts", {
 
 export const workoutEquipments = d.snakeCase.table("workout_equipments", {
   id: d.uuid().defaultRandom().primaryKey(),
-  workoutId: d.uuid().notNull(),
-  equipmentId: d.uuid().notNull(),
+  workoutId: d
+    .uuid()
+    .notNull()
+    .references(() => workouts.id),
+  venueEquipmentId: d
+    .uuid()
+    .notNull()
+    .references(() => venueEquipments.id),
   equipmentOrder: d.integer().notNull(),
   ...timestamps,
 });
 
 export const workoutSets = d.snakeCase.table("workout_sets", {
   id: d.uuid().defaultRandom().primaryKey(),
-  workoutEquipmentId: d.uuid().notNull(),
+  workoutEquipmentId: d
+    .uuid()
+    .notNull()
+    .references(() => workoutEquipments.id),
   setOrder: d.integer().notNull(),
 
-  resistance: d.numeric({ precision: 5, scale: 2 }),
+  resistance: d.numeric({ precision: 6, scale: 2 }),
   reps: d.integer(),
 
   durationSeconds: d.integer(),
