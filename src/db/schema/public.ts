@@ -131,7 +131,7 @@ export const workoutSets = d.snakeCase.table(
     d.check("workout_sets_set_order_non_negative", sql`${table.setOrder} >= 0`),
     d.check(
       "workout_sets_resistance_null_or_positive",
-      sql`${table.setOrder} IS NULL OR ${table.setOrder} > 0`,
+      sql`${table.resistance} IS NULL OR ${table.resistance} > 0`,
     ),
     d.check(
       "workout_sets_reps_null_or_positive",
@@ -147,3 +147,5 @@ export const workoutSets = d.snakeCase.table(
     ),
   ],
 );
+
+// export
