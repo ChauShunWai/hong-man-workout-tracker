@@ -117,35 +117,99 @@ export const workoutSets = d.snakeCase.table(
       .references(() => workoutEquipments.id),
     setOrder: d.integer().notNull(),
 
+    resistanceType: resistanceTypeEnum(),
     resistance: d.numeric({ precision: 6, scale: 2 }),
-    reps: d.integer(),
 
+    logType: logTypeEnum().notNull(),
+    reps: d.integer(),
     durationSeconds: d.integer(),
     distanceMeters: d.integer(),
+
     ...timestamps,
   },
   (table) => [
     d
       .unique("workout_sets_unique_set_order_per_workout")
       .on(table.workoutEquipmentId, table.setOrder),
+
     d.check("workout_sets_set_order_non_negative", sql`${table.setOrder} >= 0`),
+
     d.check(
       "workout_sets_resistance_null_or_positive",
       sql`${table.resistance} IS NULL OR ${table.resistance} > 0`,
     ),
+
     d.check(
       "workout_sets_reps_null_or_positive",
       sql`${table.reps} IS NULL OR ${table.reps} > 0`,
     ),
+
     d.check(
       "workout_sets_duration_seconds_null_or_positive",
       sql`${table.durationSeconds} IS NULL OR ${table.durationSeconds} > 0`,
     ),
+
     d.check(
       "workout_sets_distance_meters_null_or_positive",
       sql`${table.distanceMeters} IS NULL OR ${table.distanceMeters} > 0`,
     ),
+
+    d.check(
+      "workout_sets_log_type_duration_shape",
+      sql`
+        ${table.logType} <> 'duration'
+        OR (
+          ${table.reps} IS NULL
+          AND ${table.durationSeconds} IS NOT NULL
+          AND ${table.distanceMeters} IS NULL
+        )
+      `,
+    ),
+
+    d.check(
+      "workout_sets_log_type_duration_distance_shape",
+      sql`
+        ${table.logType} <> 'duration_distance'
+        OR (
+          ${table.reps} IS NULL
+          AND ${table.durationSeconds} IS NOT NULL
+          AND ${table.distanceMeters} IS NOT NULL
+        )
+      `,
+    ),
+
+    d.check(
+      "workout_sets_log_type_duration_reps_shape",
+      sql`
+        ${table.logType} <> 'duration_reps'
+        OR (
+          ${table.reps} IS NOT NULL
+          AND ${table.durationSeconds} IS NOT NULL
+          AND ${table.distanceMeters} IS NULL
+        )
+      `,
+    ),
+
+    d.check(
+      "workout_sets_log_type_reps_shape",
+      sql`
+        ${table.logType} <> 'reps'
+        OR (
+          ${table.reps} IS NOT NULL
+          AND ${table.durationSeconds} IS NULL
+          AND ${table.distanceMeters} IS NULL
+        )
+      `,
+    ),
+
+    d.check(
+      "workout_sets_resistance_type_null_resistance_null",
+      sql`${table.resistanceType} IS NOT NULL OR ${table.resistance} IS NULL`,
+    ),
+
+    d.check(
+      "workout_sets_resistance_type_non_null_resistance_non_null",
+      sql`${table.resistanceType} IS NULL OR ${table.resistance} IS NOT NULL`,
+    ),
   ],
 );
-
-// export
