@@ -42,7 +42,7 @@ export const venueEquipments = d.snakeCase.table(
       .uuid()
       .notNull()
       .references(() => venues.id),
-    equipmentId: d
+    canonicalEquipmentId: d
       .uuid()
       .notNull()
       .references(() => canonicalEquipments.id),
@@ -53,7 +53,12 @@ export const venueEquipments = d.snakeCase.table(
   (table) => [
     d
       .unique("venue_equipments_unique_equipment_name")
-      .on(table.venueId, table.equipmentId, table.nameEn, table.nameCn),
+      .on(
+        table.venueId,
+        table.canonicalEquipmentId,
+        table.nameEn,
+        table.nameCn,
+      ),
   ],
 );
 
