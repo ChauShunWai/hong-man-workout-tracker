@@ -93,6 +93,7 @@ export const workoutEquipments = d.snakeCase.table(
       .uuid()
       .notNull()
       .references(() => venueEquipments.id),
+    equipmentProfileId: d.uuid().references(() => equipmentProfiles.id),
     equipmentOrder: d.integer().notNull(),
     ...timestamps,
   },
@@ -211,5 +212,26 @@ export const workoutSets = d.snakeCase.table(
       "workout_sets_resistance_type_non_null_resistance_non_null",
       sql`${table.resistanceType} IS NULL OR ${table.resistance} IS NOT NULL`,
     ),
+  ],
+);
+
+export const equipmentProfiles = d.snakeCase.table(
+  "equipment_profiles",
+  {
+    id: d.uuid().defaultRandom().primaryKey(),
+    userId: d
+      .uuid()
+      .notNull()
+      .references(() => userInNeonAuth.id),
+    venueEquipmentId: d
+      .uuid()
+      .notNull()
+      .references(() => venueEquipments.id),
+    name: d.varchar({ length: 50 }).notNull(),
+  },
+  (table) => [
+    d
+      .unique("equipment_profiles_equipment_unique_profile_name")
+      .on(table.venueEquipmentId, table.name),
   ],
 );
