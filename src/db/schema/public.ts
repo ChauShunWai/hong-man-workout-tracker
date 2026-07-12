@@ -231,6 +231,7 @@ export const equipmentProfiles = d.snakeCase.table(
       .notNull()
       .references(() => venueEquipments.id),
     name: d.varchar({ length: 50 }).notNull(),
+    ...timestamps,
   },
   (table) => [
     d
