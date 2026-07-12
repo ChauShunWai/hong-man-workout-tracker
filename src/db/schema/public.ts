@@ -15,7 +15,7 @@ const logTypeEnum = d.pgEnum("log_type", [
   "reps",
 ]);
 
-const resistanceTypeEnum = d.pgEnum("resistanceType", ["weight", "level"]);
+const resistanceTypeEnum = d.pgEnum("resistance_type", ["weight", "level"]);
 
 export const venues = d.snakeCase.table("venues", {
   id: d.uuid().defaultRandom().primaryKey(),
