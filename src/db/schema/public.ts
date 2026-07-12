@@ -52,13 +52,11 @@ export const venueEquipments = d.snakeCase.table(
   },
   (table) => [
     d
-      .unique("venue_equipments_unique_equipment_name")
-      .on(
-        table.venueId,
-        table.canonicalEquipmentId,
-        table.nameEn,
-        table.nameCn,
-      ),
+      .unique("venue_equipments_unique_english_equipment_name")
+      .on(table.venueId, table.nameEn),
+    d
+      .unique("venue_equipments_unique_chinese_equipment_name")
+      .on(table.venueId, table.nameCn),
   ],
 );
 
