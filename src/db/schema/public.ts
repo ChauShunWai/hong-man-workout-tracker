@@ -48,6 +48,7 @@ export const venueEquipments = d.snakeCase.table(
       .references(() => canonicalEquipments.id),
     nameEn: d.text().notNull(),
     nameCn: d.text().notNull(),
+    notes: d.text(),
     ...timestamps,
   },
   (table) => [
@@ -74,6 +75,7 @@ export const workouts = d.snakeCase.table(
       .references(() => venues.id),
     startedAt: d.timestamp({ withTimezone: true }).notNull(),
     endedAt: d.timestamp({ withTimezone: true }),
+    notes: d.text(),
     ...timestamps,
   },
   (table) => [
