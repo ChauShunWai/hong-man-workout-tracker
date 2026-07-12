@@ -235,6 +235,6 @@ export const equipmentProfiles = d.snakeCase.table(
   (table) => [
     d
       .unique("equipment_profiles_equipment_unique_profile_name")
-      .on(table.venueEquipmentId, table.name),
+      .on(table.userId, table.venueEquipmentId, table.name),
   ],
 );
