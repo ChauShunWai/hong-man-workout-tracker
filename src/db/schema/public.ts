@@ -133,7 +133,7 @@ export const workoutSets = d.snakeCase.table(
   },
   (table) => [
     d
-      .unique("workout_sets_unique_set_order_per_workout")
+      .unique("workout_sets_unique_set_order_per_workout_equipment")
       .on(table.workoutEquipmentId, table.setOrder),
 
     d.check("workout_sets_set_order_non_negative", sql`${table.setOrder} >= 0`),
