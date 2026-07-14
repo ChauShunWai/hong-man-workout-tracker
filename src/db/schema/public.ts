@@ -60,6 +60,22 @@ export const venueEquipments = d.snakeCase.table(
   ],
 );
 
+export const userVenueEquipmentNotes = d.snakeCase.table(
+  "user_venue_equipment_notes",
+  {
+    id: d.uuid().defaultRandom().primaryKey(),
+    userId: d
+      .uuid()
+      .notNull()
+      .references(() => userInNeonAuth.id, { onDelete: "cascade" }),
+    venueEquipmentId: d
+      .uuid()
+      .notNull()
+      .references(() => venueEquipments.id, { onDelete: "restrict" }),
+    notes: d.text(),
+  },
+);
+
 export const workouts = d.snakeCase.table(
   "workouts",
   {
