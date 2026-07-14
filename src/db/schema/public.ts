@@ -41,11 +41,11 @@ export const venueEquipments = d.snakeCase.table(
     venueId: d
       .uuid()
       .notNull()
-      .references(() => venues.id),
+      .references(() => venues.id, { onDelete: "restrict" }),
     canonicalEquipmentId: d
       .uuid()
       .notNull()
-      .references(() => canonicalEquipments.id),
+      .references(() => canonicalEquipments.id, { onDelete: "restrict" }),
     nameEn: d.text().notNull(),
     nameCn: d.text().notNull(),
     notes: d.text(),
@@ -68,11 +68,11 @@ export const workouts = d.snakeCase.table(
     userId: d
       .uuid()
       .notNull()
-      .references(() => userInNeonAuth.id),
+      .references(() => userInNeonAuth.id, { onDelete: "cascade" }),
     venueId: d
       .uuid()
       .notNull()
-      .references(() => venues.id),
+      .references(() => venues.id, { onDelete: "restrict" }),
     startedAt: d.timestamp({ withTimezone: true }).notNull(),
     endedAt: d.timestamp({ withTimezone: true }),
     notes: d.text(),
@@ -93,12 +93,14 @@ export const workoutEquipments = d.snakeCase.table(
     workoutId: d
       .uuid()
       .notNull()
-      .references(() => workouts.id),
+      .references(() => workouts.id, { onDelete: "cascade" }),
     venueEquipmentId: d
       .uuid()
       .notNull()
-      .references(() => venueEquipments.id),
-    equipmentProfileId: d.uuid().references(() => equipmentProfiles.id),
+      .references(() => venueEquipments.id, { onDelete: "restrict" }),
+    equipmentProfileId: d
+      .uuid()
+      .references(() => equipmentProfiles.id, { onDelete: "restrict" }),
     equipmentOrder: d.integer().notNull(),
     ...timestamps,
   },
@@ -120,7 +122,7 @@ export const workoutSets = d.snakeCase.table(
     workoutEquipmentId: d
       .uuid()
       .notNull()
-      .references(() => workoutEquipments.id),
+      .references(() => workoutEquipments.id, { onDelete: "cascade" }),
     setOrder: d.integer().notNull(),
 
     resistanceType: resistanceTypeEnum(),
@@ -227,11 +229,11 @@ export const equipmentProfiles = d.snakeCase.table(
     userId: d
       .uuid()
       .notNull()
-      .references(() => userInNeonAuth.id),
+      .references(() => userInNeonAuth.id, { onDelete: "cascade" }),
     venueEquipmentId: d
       .uuid()
       .notNull()
-      .references(() => venueEquipments.id),
+      .references(() => venueEquipments.id, { onDelete: "restrict" }),
     name: d.varchar({ length: 50 }).notNull(),
     ...timestamps,
   },
