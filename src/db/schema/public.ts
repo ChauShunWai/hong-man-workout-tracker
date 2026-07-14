@@ -73,6 +73,7 @@ export const userVenueEquipmentNotes = d.snakeCase.table(
       .notNull()
       .references(() => venueEquipments.id, { onDelete: "restrict" }),
     notes: d.text().notNull(),
+    ...timestamps,
   },
 
   (table) => [
