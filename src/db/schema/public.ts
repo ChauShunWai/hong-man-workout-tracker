@@ -48,7 +48,6 @@ export const venueEquipments = d.snakeCase.table(
       .references(() => canonicalEquipments.id, { onDelete: "restrict" }),
     nameEn: d.text().notNull(),
     nameCn: d.text().notNull(),
-    notes: d.text(),
     ...timestamps,
   },
   (table) => [
