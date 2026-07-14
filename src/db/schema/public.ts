@@ -72,8 +72,14 @@ export const userVenueEquipmentNotes = d.snakeCase.table(
       .uuid()
       .notNull()
       .references(() => venueEquipments.id, { onDelete: "restrict" }),
-    notes: d.text(),
+    notes: d.text().notNull(),
   },
+
+  (table) => [
+    d
+      .unique("user_venue_equipment_notes_one_user_one_note_for_one_equipment")
+      .on(table.userId, table.venueEquipmentId),
+  ],
 );
 
 export const workouts = d.snakeCase.table(
