@@ -80,6 +80,10 @@ export const userVenueEquipmentNotes = d.snakeCase.table(
     d
       .unique("user_venue_equipment_notes_one_user_one_note_for_one_equipment")
       .on(table.userId, table.venueEquipmentId),
+    d.check(
+      "user_venue_equipment_notes_not_empty",
+      sql`length(trim(${table.notes})) > 0`,
+    ),
   ],
 );
 
@@ -104,6 +108,11 @@ export const workouts = d.snakeCase.table(
     d.check(
       "workouts_started_at_before_ended_at",
       sql`${table.endedAt} IS NULL OR ${table.endedAt} >= ${table.startedAt}`,
+    ),
+
+    d.check(
+      "workouts_notes_null_or_not_empty",
+      sql`${table.notes} IS NULL OR length(trim(${table.notes})) > 0`,
     ),
   ],
 );
