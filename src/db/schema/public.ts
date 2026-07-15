@@ -117,6 +117,31 @@ export const workouts = d.snakeCase.table(
   ],
 );
 
+export const equipmentProfiles = d.snakeCase.table(
+  "equipment_profiles",
+  {
+    id: d.uuid().defaultRandom().primaryKey(),
+    userId: d
+      .uuid()
+      .notNull()
+      .references(() => userInNeonAuth.id, { onDelete: "cascade" }),
+    venueEquipmentId: d
+      .uuid()
+      .notNull()
+      .references(() => venueEquipments.id, { onDelete: "restrict" }),
+    name: d.varchar({ length: 50 }).notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    d
+      .unique("equipment_profiles_user_equipment_name_unique")
+      .on(table.userId, table.venueEquipmentId, table.name),
+    d
+      .unique("equipment_profiles_id_venue_equipment_unique")
+      .on(table.id, table.venueEquipmentId),
+  ],
+);
+
 export const workoutEquipments = d.snakeCase.table(
   "workout_equipments",
   {
@@ -258,30 +283,5 @@ export const workoutSets = d.snakeCase.table(
       "workout_sets_resistance_type_non_null_resistance_non_null",
       sql`${table.resistanceType} IS NULL OR ${table.resistance} IS NOT NULL`,
     ),
-  ],
-);
-
-export const equipmentProfiles = d.snakeCase.table(
-  "equipment_profiles",
-  {
-    id: d.uuid().defaultRandom().primaryKey(),
-    userId: d
-      .uuid()
-      .notNull()
-      .references(() => userInNeonAuth.id, { onDelete: "cascade" }),
-    venueEquipmentId: d
-      .uuid()
-      .notNull()
-      .references(() => venueEquipments.id, { onDelete: "restrict" }),
-    name: d.varchar({ length: 50 }).notNull(),
-    ...timestamps,
-  },
-  (table) => [
-    d
-      .unique("equipment_profiles_user_equipment_name_unique")
-      .on(table.userId, table.venueEquipmentId, table.name),
-    d
-      .unique("equipment_profiles_id_venue_equipment_unique")
-      .on(table.id, table.venueEquipmentId),
   ],
 );
