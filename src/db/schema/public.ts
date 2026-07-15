@@ -129,9 +129,7 @@ export const workoutEquipments = d.snakeCase.table(
       .uuid()
       .notNull()
       .references(() => venueEquipments.id, { onDelete: "restrict" }),
-    equipmentProfileId: d
-      .uuid()
-      .references(() => equipmentProfiles.id, { onDelete: "restrict" }),
+    equipmentProfileId: d.uuid(),
     equipmentOrder: d.integer().notNull(),
     ...timestamps,
   },
@@ -143,6 +141,16 @@ export const workoutEquipments = d.snakeCase.table(
       "workout_equipments_equipment_order_non_negative",
       sql`${table.equipmentOrder} >= 0`,
     ),
+    d
+      .foreignKey({
+        columns: [table.equipmentProfileId, table.venueEquipmentId],
+        foreignColumns: [
+          equipmentProfiles.id,
+          equipmentProfiles.venueEquipmentId,
+        ],
+        name: "workout_equipments_profile_matches_venue_equipment_foreign_key",
+      })
+      .onDelete("restrict"),
   ],
 );
 
@@ -272,5 +280,8 @@ export const equipmentProfiles = d.snakeCase.table(
     d
       .unique("equipment_profiles_equipment_unique_profile_name")
       .on(table.userId, table.venueEquipmentId, table.name),
+    d
+      .unique("equipment_profiles_id_venue_equipment_unique")
+      .on(table.id, table.venueEquipmentId),
   ],
 );
