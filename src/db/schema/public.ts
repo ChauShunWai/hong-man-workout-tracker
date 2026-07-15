@@ -139,6 +139,10 @@ export const equipmentProfiles = d.snakeCase.table(
     d
       .unique("equipment_profiles_id_venue_equipment_unique")
       .on(table.id, table.venueEquipmentId),
+    d.check(
+      "equipment_profiles_name_not_empty",
+      sql`length(trim(${table.name})) > 0`,
+    ),
   ],
 );
 
