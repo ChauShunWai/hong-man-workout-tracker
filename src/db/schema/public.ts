@@ -3,7 +3,7 @@ import * as d from "drizzle-orm/pg-core";
 import { userInNeonAuth } from "./neonAuth";
 
 const timestamps = {
-  updatedAt: d.timestamp({ withTimezone: true }),
+  updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
   createdAt: d.timestamp({ withTimezone: true }).defaultNow().notNull(),
   deletedAt: d.timestamp({ withTimezone: true }),
 };
