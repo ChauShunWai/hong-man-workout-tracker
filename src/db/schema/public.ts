@@ -17,22 +17,52 @@ const logTypeEnum = d.pgEnum("log_type", [
 
 const resistanceTypeEnum = d.pgEnum("resistance_type", ["weight", "level"]);
 
-export const venues = d.snakeCase.table("venues", {
-  id: d.uuid().defaultRandom().primaryKey(),
-  nameEn: d.text().notNull().unique(),
-  nameCn: d.text().notNull().unique(),
-  ...timestamps,
-});
+export const venues = d.snakeCase.table(
+  "venues",
+  {
+    id: d.uuid().defaultRandom().primaryKey(),
+    nameEn: d.text().notNull().unique(),
+    nameCn: d.text().notNull().unique(),
+    ...timestamps,
+  },
+  (table) => [
+    d.check(
+      "venues_english_name_not_empty",
+      sql`length(trim(${table.nameEn})) > 0`,
+    ),
+    d.check(
+      "venues_chinese_name_not_empty",
+      sql`length(trim(${table.nameCn})) > 0`,
+    ),
+  ],
+);
 
-export const canonicalEquipments = d.snakeCase.table("canonical_equipments", {
-  id: d.uuid().defaultRandom().primaryKey(),
-  slug: d.text().notNull().unique(),
-  nameEn: d.text().notNull().unique(),
-  nameCn: d.text().notNull().unique(),
-  logType: logTypeEnum().notNull(),
-  resistanceType: resistanceTypeEnum(),
-  ...timestamps,
-});
+export const canonicalEquipments = d.snakeCase.table(
+  "canonical_equipments",
+  {
+    id: d.uuid().defaultRandom().primaryKey(),
+    slug: d.text().notNull().unique(),
+    nameEn: d.text().notNull().unique(),
+    nameCn: d.text().notNull().unique(),
+    logType: logTypeEnum().notNull(),
+    resistanceType: resistanceTypeEnum(),
+    ...timestamps,
+  },
+  (table) => [
+    d.check(
+      "canonical_equipments_slug_not_empty",
+      sql`length(trim(${table.slug})) > 0`,
+    ),
+    d.check(
+      "canonical_equipments_english_name_not_empty",
+      sql`length(trim(${table.nameEn})) > 0`,
+    ),
+    d.check(
+      "canonical_equipments_chinese_name_not_empty",
+      sql`length(trim(${table.nameCn})) > 0`,
+    ),
+  ],
+);
 
 export const venueEquipments = d.snakeCase.table(
   "venue_equipments",
@@ -57,6 +87,14 @@ export const venueEquipments = d.snakeCase.table(
     d
       .unique("venue_equipments_unique_chinese_equipment_name")
       .on(table.venueId, table.nameCn),
+    d.check(
+      "venue_equipments_english_name_not_empty",
+      sql`length(trim(${table.nameEn})) > 0`,
+    ),
+    d.check(
+      "venue_equipments_chinese_name_not_empty",
+      sql`length(trim(${table.nameCn})) > 0`,
+    ),
   ],
 );
 
