@@ -8,14 +8,17 @@ const timestamps = {
   deletedAt: d.timestamp({ withTimezone: true }),
 };
 
-const logTypeEnum = d.pgEnum("log_type", [
+export const logTypeEnum = d.pgEnum("log_type", [
   "duration",
   "duration_distance",
   "duration_reps",
   "reps",
 ]);
 
-const resistanceTypeEnum = d.pgEnum("resistance_type", ["weight", "level"]);
+export const resistanceTypeEnum = d.pgEnum("resistance_type", [
+  "weight",
+  "level",
+]);
 
 export const venues = d.snakeCase.table(
   "venues",
