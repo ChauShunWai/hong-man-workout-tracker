@@ -234,10 +234,10 @@ export const workoutSets = d.snakeCase.table(
       .references(() => workoutEquipments.id, { onDelete: "cascade" }),
     setOrder: d.integer().notNull(),
 
-    resistanceType: resistanceTypeEnum(),
+    // if resistance_type not null
     resistance: d.numeric({ precision: 6, scale: 2 }),
 
-    logType: logTypeEnum().notNull(),
+    // shape depends on log_type
     reps: d.integer(),
     durationSeconds: d.integer(),
     distanceMeters: d.integer(),
@@ -269,64 +269,6 @@ export const workoutSets = d.snakeCase.table(
     d.check(
       "workout_sets_distance_meters_null_or_positive",
       sql`${table.distanceMeters} IS NULL OR ${table.distanceMeters} > 0`,
-    ),
-
-    d.check(
-      "workout_sets_log_type_duration_shape",
-      sql`
-        ${table.logType} <> 'duration'
-        OR (
-          ${table.reps} IS NULL
-          AND ${table.durationSeconds} IS NOT NULL
-          AND ${table.distanceMeters} IS NULL
-        )
-      `,
-    ),
-
-    d.check(
-      "workout_sets_log_type_duration_distance_shape",
-      sql`
-        ${table.logType} <> 'duration_distance'
-        OR (
-          ${table.reps} IS NULL
-          AND ${table.durationSeconds} IS NOT NULL
-          AND ${table.distanceMeters} IS NOT NULL
-        )
-      `,
-    ),
-
-    d.check(
-      "workout_sets_log_type_duration_reps_shape",
-      sql`
-        ${table.logType} <> 'duration_reps'
-        OR (
-          ${table.reps} IS NOT NULL
-          AND ${table.durationSeconds} IS NOT NULL
-          AND ${table.distanceMeters} IS NULL
-        )
-      `,
-    ),
-
-    d.check(
-      "workout_sets_log_type_reps_shape",
-      sql`
-        ${table.logType} <> 'reps'
-        OR (
-          ${table.reps} IS NOT NULL
-          AND ${table.durationSeconds} IS NULL
-          AND ${table.distanceMeters} IS NULL
-        )
-      `,
-    ),
-
-    d.check(
-      "workout_sets_resistance_type_null_resistance_null",
-      sql`${table.resistanceType} IS NOT NULL OR ${table.resistance} IS NULL`,
-    ),
-
-    d.check(
-      "workout_sets_resistance_type_non_null_resistance_non_null",
-      sql`${table.resistanceType} IS NULL OR ${table.resistance} IS NOT NULL`,
     ),
   ],
 );
